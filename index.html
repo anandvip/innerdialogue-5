@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inner Dialogue Journal</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #228be6;
+            --primary-hover: #1c7ed6;
+            --danger-color: #fa5252;
+            --danger-hover: #e03131;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --text-primary: #2c3e50;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --border-radius: 8px;
+            --transition-speed: 0.2s;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--gray-100);
+        }
+
+        /* Enhanced Header Styles */
+        #header {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-container img {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            object-fit: cover;
+            transition: transform var(--transition-speed) ease;
+        }
+
+        .logo-container img:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-container h1 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        /* Main Container Styles */
+        .app-container {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 1rem auto;
+            gap: 1rem;
+            padding: 0 1rem;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background: #ffffff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        .user-profile {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+        }
+
+        .user-profile img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid #fff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-profile h3 {
+            margin: 0.5rem 0;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+        }
+
+        .user-profile p {
+            color: var(--gray-600);
+            margin: 0.5rem 0;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            background: #ffffff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* AI Prompt Section */
+        .ai-prompt-section {
+            background: var(--gray-100);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .prompt-controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            transition: border-color var(--transition-speed);
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .generated-prompt {
+            background: #ffffff;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            min-height: 60px;
+            border: 1px solid var(--gray-200);
+        }
+
+        /* Journal Editor */
+        .journal-editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .journal-textarea {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: none;
+            min-height: 200px;
+            transition: border-color var(--transition-speed);
+        }
+
+        .journal-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Entry List */
+        .entry-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .entry-item {
+            background: #ffffff;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .entry-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .entry-date {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .entry-preview {
+            color: var(--gray-700);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Button Styles */
+        .button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .button-primary {
+            background: var(--primary-color);
+            color: #ffffff;
+        }
+
+        .button-primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+        }
+
+        .button-secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .button-secondary:hover:not(:disabled) {
+            background: var(--gray-300);
+        }
+
+        .button-danger {
+            background: var(--danger-color);
+            color: #ffffff;
+        }
+
+        .button-danger:hover:not(:disabled) {
+            background: var(--danger-hover);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: var(--gray-800);
+            color: #ffffff;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            animation: slideIn var(--transition-speed) ease-out;
+            max-width: 300px;
+        }
+
+        .toast-success {
+            background: #2f9e44;
+        }
+
+        .toast-error {
+            background: var(--danger-color);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+                margin: 0;
+                padding: 0;
+            }
+
+            .sidebar {
+                width: auto;
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .main-content {
+                border-radius: 0;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Header with Logo -->
+    <header id="header">
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="https://raw.githubusercontent.com/anandvip/innerdialogue-2/refs/heads/main/logo/FLUX-2025-01-03-12_12_55.jpeg" 
+                     alt="Inner Dialogue Logo"
+                     title="Inner Dialogue">
+                <h1>Inner Dialogue</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sign In Screen -->
+    <div id="sign-in-container" class="hidden">
+        <div class="sign-in-content">
+            <h2>Welcome to Inner Dialogue</h2>
+            <p>Your personal space for reflection and growth</p>
+            <button id="sign-in-button" class="button button-primary">
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div class="app-container hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="user-profile">
+                <img id="user-image" src="/api/placeholder/80/80" alt="Profile Picture">
+                <h3 id="user-name">Loading...</h3>
+                <p id="user-email"></p>
+                <button id="sign-out-button" class="button button-secondary">Sign Out</button>
+            </div>
+
+            <div class="entries-section">
+                <h2>Your Entries</h2>
+                <ul id="entry-list" class="entry-list"></ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- AI Prompt Section -->
+            <section class="ai-prompt-section">
+                <div class="input-group">
+                    <label for="ai-keywords">Get Writing Inspiration</label>
+                    <div class="prompt-controls">
+                        <input type="text" id="ai-keywords" 
+                               placeholder="Enter topics (e.g., growth, reflection, challenges)">
+                        <select id="ai-provider">
+                            <option value="openai">OpenAI</option>
+                            <option value="mistral">Mistral AI</option>
+                            <option value="gemini">Gemini</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="generate-prompt-button" class="button button-primary">Generate Prompt</button>
+                <div id="generated-text" class="generated-prompt"></div>
+                <button id="copy-button" class="button button-secondary">Copy to Clipboard</button>
+            </section>
+
+            <!-- Journal Editor -->
+            <section class="journal-editor">
+                <textarea id="journal-text" class="journal-textarea"
+                          placeholder="Start writing your thoughts here..."></textarea>
+                <button id="save-button" class="button button-primary">Save Entry</button>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Application Script -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithPopup, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            getDocs, 
+            addDoc,
+            setDoc,
+            deleteDoc,
+            query,
+            orderBy,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB00L-6PsCK5LMAVbUPXgNNF0BywlZKqwk",
+            authDomain: "weekly-journal-9df9c.firebaseapp.com",
+            projectId: "weekly-journal-9df9c",
+            storageBucket: "weekly-journal-9df9c.appspot.com",
+            messagingSenderId: "267644429656",
+            appId: "1:267644429656:web:8a5b8a73960f9adf5af12d"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // AI Provider Configuration
+        const API_KEYS = {
+            openai: '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',
+            mistral: 'ic8ExdQksCSXrL4qo0sm9bdkwtKmDUCm',
+            gemini: 'AIzaSyBPO0PQ4PltzLQOSGJOxbqnyt-8xAG7ZpA'
+        };
+
+        /**
+         * FirebaseService: Handles all Firebase operations
+         * This class encapsulates Firebase-related functionality to maintain clean separation of concerns
+         */
+        class FirebaseService {
+            // Get user's entries collection reference
+            static getUserEntriesRef(userId) {
+                return collection(db, 'users', userId, 'entries');
+            }
+
+            // Save or update an entry
+            static async saveEntry(userId, text, editingId = null) {
+                try {
+                    const entryData = {
+                        text: text.trim(),
+                        timestamp: serverTimestamp(),
+                        userId: userId,
+                        updatedAt: serverTimestamp()
+                    };
+
+                    if (editingId) {
+                        await setDoc(doc(db, 'users', userId, 'entries', editingId), entryData);
+                        return { success: true, action: 'updated' };
+                    } else {
+                        const docRef = await addDoc(this.getUserEntriesRef(userId), entryData);
+                        return { success: true, action: 'saved', id: docRef.id };
+                    }
+                } catch (error) {
+                    console.error('Error saving entry:', error);
+                    throw new Error('Failed to save entry: ' + error.message);
+                }
+            }
+
+            // Load all entries for a user
+            static async loadEntries(userId) {
+                try {
+                    const entriesQuery = query(
+                        this.getUserEntriesRef(userId),
+                        orderBy('timestamp', 'desc')
+                    );
+
+                    const snapshot = await getDocs(entriesQuery);
+                    return snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                } catch (error) {
+                    console.error('Error loading entries:', error);
+                    throw new Error('Failed to load entries: ' + error.message);
+                }
+            }
+
+            // Delete an entry
+            static async deleteEntry(userId, entryId) {
+                try {
+                    await deleteDoc(doc(db, 'users', userId, 'entries', entryId));
+                    return { success: true };
+                } catch (error) {
+                    console.error('Error deleting entry:', error);
+                    throw new Error('Failed to delete entry: ' + error.message);
+                }
+            }
+        }
+
+        /**
+         * AIService: Handles all AI-related operations
+         * This class manages AI provider interactions and prompt generation
+         */
+        class AIService {
+            static getEndpoint(provider) {
+                const endpoints = {
+                    openai: 'https://api.openai.com/v1/chat/completions',
+                    mistral: 'https://api.mistral.ai/v1/chat/completions',
+                    gemini: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+                };
+                return endpoints[provider];
+            }
+
+            static getHeaders(provider) {
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
+
+                switch (provider) {
+                    case 'openai':
+                        return {
+                            ...headers,
+                            'Authorization': `Bearer ${API_KEYS[provider]}`
+                        };
+                    case 'mistral':
+                        return {
+                            ...headers,
+                            'Authorization': `Bearer ${API_KEYS[provider]}`
+                        };
+                    case 'gemini':
+                        return headers;
+                    default:
+                        return headers;
+                }
+            }
+
+            static getRequestBody(keywords, provider) {
+                const basePrompt = `Create a thoughtful journaling prompt about ${keywords}. Focus on personal growth, self-reflection, and emotional awareness. The prompt should be engaging and open-ended.`;
+
+                switch (provider) {
+                    case 'openai':
+                        return {
+                            model: 'gpt-3.5-turbo',
+                            messages: [{
+                                role: 'user',
+                                content: basePrompt
+                            }],
+                            max_tokens: 150,
+                            temperature: 0.7
+                        };
+                    case 'mistral':
+                        return {
+                            model: 'mistral-tiny',
+                            messages: [{
+                                role: 'user',
+                                content: basePrompt
+                            }],
+                            max_tokens: 150,
+                            temperature: 0.7
+                        };
+                    case 'gemini':
+                        return {
+                            contents: [{
+                                parts: [{
+                                    text: basePrompt
+                                }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.7,
+                                maxOutputTokens: 150
+                            }
+                        };
+                    default:
+                        throw new Error('Unsupported AI provider');
+                }
+            }
+
+            static async generatePrompt(keywords, provider) {
+                const endpoint = this.getEndpoint(provider);
+                const headers = this.getHeaders(provider);
+                const body = this.getRequestBody(keywords, provider);
+
+                const url = provider === 'gemini' 
+                    ? `${endpoint}?key=${API_KEYS[provider]}`
+                    : endpoint;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(body)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error('AI API Error:', {
+                            status: response.status,
+                            statusText: response.statusText,
+                            errorData
+                        });
+                        
+                        if (response.status === 401) {
+                            throw new Error('API key is invalid or expired');
+                        }
+                        throw new Error(`AI request failed: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return this.extractPrompt(data, provider);
+                } catch (error) {
+                    console.error('Error generating prompt:', error);
+                    throw error;
+                }
+            }
+
+            static extractPrompt(data, provider) {
+                try {
+                    switch (provider) {
+                        case 'openai':
+                            return data.choices[0].message.content;
+                        case 'mistral':
+                            return data.choices[0].message.content;
+                        case 'gemini':
+                            return data.candidates[0].content.parts[0].text;
+                        default:
+                            throw new Error('Unsupported AI provider');
+                    }
+                } catch (error) {
+                    throw new Error('Failed to parse AI response');
+                }
+            }
+        }
+
+        /**
+         * UIService: Manages all UI-related operations
+         * This class handles DOM manipulation, event handling, and UI state management
+         */
+        class UIService {
+            static elements = {
+                signInContainer: document.getElementById('sign-in-container'),
+                appContainer: document.querySelector('.app-container'),
+                userProfile: {
+                    image: document.getElementById('user-image'),
+                    name: document.getElementById('user-name'),
+                    email: document.getElementById('user-email')
+                },
+                buttons: {
+                    signIn: document.getElementById('sign-in-button'),
+                    signOut: document.getElementById('sign-out-button'),
+                    generate: document.getElementById('generate-prompt-button'),
+                    copy: document.getElementById('copy-button'),
+                    save: document.getElementById('save-button')
+                },
+                inputs: {
+                    keywords: document.getElementById('ai-keywords'),
+                    provider: document.getElementById('ai-provider'),
+                    journal: document.getElementById('journal-text')
+                },
+                entryList: document.getElementById('entry-list'),
+                generatedText: document.getElementById('generated-text'),
+                toastContainer: document.getElementById('toast-container')
+            };
+
+            static showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
+                toast.textContent = message;
+                this.elements.toastContainer.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+
+            static toggleLoadingState(button, isLoading, loadingText = 'Loading...') {
+                button.disabled = isLoading;
+                button.textContent = isLoading ? loadingText : button.dataset.originalText || button.textContent;
+            }
+
+            static updateUserProfile(user) {
+                this.elements.userProfile.image.src = user.photoURL || '/api/placeholder/80/80';
+                this.elements.userProfile.name.textContent = user.displayName || 'User';
+                this.elements.userProfile.email.textContent = user.email;
+            }
+
+            static renderEntry(entry) {
+                const li = document.createElement('li');
+                li.className = 'entry-item';
+                
+                const date = entry.timestamp?.toDate() || new Date();
+                const preview = entry.text.substring(0, 100) + (entry.text.length > 100 ? '...' : '');
+                
+                li.innerHTML = `
+                    <div class="entry-header">
+                        <span class="entry-date">${date.toLocaleDateString()}</span>
+                        <div class="entry-actions">
+                            <button class="button button-secondary edit-btn">Edit</button>
+                            <button class="button button-danger delete-btn">Delete</button>
+                        </div>
+                    </div>
+                    <div class="entry-preview">${preview}</div>
+                `;
+
+                return li;
+            }
+
+            static clearEditor() {
+                this.elements.inputs.journal.value = '';
+                this.elements.buttons.save.dataset.editingId = '';
+                this.elements.buttons.save.textContent = 'Save Entry';
+            }
+
+            static setEditing(entry) {
+                this.elements.inputs.journal.value = entry.text;
+                this.elements.buttons.save.dataset.editingId = entry.id;
+                this.elements.buttons.save.textContent = 'Update Entry';
+                this.elements.inputs.journal.focus();
+            }
+        }
+
+        /**
+         * AppController: Main application controller
+         * This class coordinates between services and manages the application's core logic
+         */
+        class AppController {
+            constructor() {
+                this.setupEventListeners();
+                this.initializeAuth();
+            }
+
+            setupEventListeners() {
+                // Auth event listeners
+                UIService.elements.buttons.signIn.addEventListener('click', () => this.handleSignIn());
+                UIService.elements.buttons.signOut.addEventListener('click', () => this.handleSignOut());
+
+                // Journal event listeners
+                UIService.elements.inputs.journal.addEventListener('input', (e) => this.handleEditorInput(e));
+                UIService.elements.buttons.save.addEventListener('click', () => this.handleEntrySave());
+
+                // AI prompt event listeners
+                UIService.elements.buttons.generate.addEventListener('click', () => this.handlePromptGeneration());
+                UIService.elements.buttons.copy.addEventListener('click', () => this.handlePromptCopy());
+            }
+
+            initializeAuth() {
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        UIService.elements.signInContainer.classList.add('hidden');
+                        UIService.elements.appContainer.classList.remove('hidden');
+                        UIService.updateUserProfile(user);
+                        await this.loadEntries();
+                    } else {
+                        UIService.elements.signInContainer.classList.remove('hidden');
+                        UIService.elements.appContainer.classList.add('hidden');
+                    }
+                });
+            }
+
+            async handleSignIn() {
+                try {
+                    const provider = new GoogleAuthProvider();
+                    await signInWithPopup(auth, provider);
+                    UIService.showToast('Signed in successfully!');
+                } catch (error) {
+                    console.error('Sign-in error:', error);
+                    UIService.showToast('Failed to sign in', 'error');
+                }
+            }
+
+            async handleSignOut() {
+                try {
+                    await signOut(auth);
+                    UIService.showToast('Signed out successfully!');
+                } catch (error) {
+                    console.error('Sign-out error:', error);
+                    UIService.showToast('Failed to sign out', 'error');
+                }
+            }
+
+            async handleEntrySave() {
+                const text = UIService.elements.inputs.journal.value;
+                const editingId = UIService.elements.buttons.save.dataset.editingId;
+                const user = auth.currentUser;
+
+                if (!text.trim()) {
+                    UIService.showToast('Entry cannot be empty', 'error');
+                    return;
+                }
+
+                try {
+                    UIService.toggleLoadingState(UIService.elements.buttons.save, true, 'Saving...');
+                    const result = await FirebaseService.saveEntry(user.uid, text, editingId);
+                    UIService.showToast(`Entry ${result.action} successfully!`);
+                    UIService.clearEditor();
+                    await this.loadEntries();
+                } catch (error) {
+                    UIService.showToast(error.message, 'error');
+                } finally {
+                    UIService.toggleLoadingState(UIService.elements.buttons.save, false);
+                }
+            }
+
+            handleEditorInput(event) {
+                UIService.elements.buttons.save.disabled = !event.target.value.trim();
+            }
+
+            async handlePromptGeneration() {
+                const keywords = UIService.elements.inputs.keywords.value.trim();
+                const provider = UIService.elements.inputs.provider.value;
+
+                if (!keywords) {
+                    UIService.showToast('Please enter keywords first', 'error');
+                    return;
+                }
+
+                try {
+                    UIService.toggleLoadingState(UIService.elements.buttons.generate, true, 'Generating...');
+                    const prompt = await AIService.generatePrompt(keywords, provider);
+                    UIService.elements.generatedText.textContent = prompt;
+                    UIService.showToast('Prompt generated successfully!');
+                } catch (error) {
+                    UIService.showToast(error.message, 'error');
+                } finally {
+                    UIService.toggleLoadingState(UIService.elements.buttons.generate, false, 'Generate Prompt');
+                }
+            }
+
+            async handlePromptCopy() {
+                const text = UIService.elements.generatedText.textContent;
+                if (!text) {
+                    UIService.showToast('No prompt to copy', 'error');
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.writeText(text);
+                    UIService.showToast('Prompt copied to clipboard!');
+                } catch (error) {
+                    UIService.showToast('Failed to copy prompt', 'error');
+                }
+            }
+
+            async loadEntries() {
+                const user = auth.currentUser;
+                if (!user) return;
+
+                try {
+                    const entries = await FirebaseService.loadEntries(user.uid);
+                    this.renderEntries(entries);
+                } catch (error) {
+                    UIService.showToast('Failed to load entries', 'error');
+                }
+            }
+
+            renderEntries(entries) {
+                UIService.elements.entryList.innerHTML = '';
+                
+                entries.forEach(entry => {
+                    const li = UIService.renderEntry(entry);
+
+                    // Add edit functionality
+                    li.querySelector('.edit-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        UIService.setEditing(entry);
+                    });
+
+                    // Add delete functionality
+                    li.querySelector('.delete-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.handleEntryDelete(entry.id);
+                    });
+
+                    // Add click to view/edit functionality
+                    li.addEventListener('click', () => {
+                        UIService.setEditing(entry);
+                    });
+
+                    UIService.elements.entryList.appendChild(li);
+                });
+            }
+
+            async handleEntryDelete(entryId) {
+                if (!confirm('Are you sure you want to delete this entry?')) {
+                    return;
+                }
+
+                const user = auth.currentUser;
+                if (!user) return;
+
+                try {
+                    await FirebaseService.deleteEntry(user.uid, entryId);
+                    UIService.showToast('Entry deleted successfully!');
+                    await this.loadEntries();
+                } catch (error) {
+                    UIService.showToast('Failed to delete entry', 'error');
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create the application controller
+            const app = new AppController();
+            
+            // Set initial button states
+            UIService.elements.buttons.save.disabled = true;
+            
+            // Store original button text for loading state management
+            const buttons = UIService.elements.buttons;
+            Object.values(buttons).forEach(button => {
+                if (button) {
+                    button.dataset.originalText = button.textContent;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
